@@ -1,7 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-from django.shortcuts import render
 from django.views import View
+from .models import Product
 
 # Create your views here.
 def home(request):
@@ -9,4 +8,5 @@ def home(request):
 
 class CategoryView(View):
    def get(self,request,val):
+       product = Product.objects.filter()
        return render(request,"app/category.html",locals()) 
