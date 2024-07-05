@@ -2,7 +2,7 @@ from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.views import View
-from .models import Customer, Product, Cart
+from .models import Customer, OrderPlaced, Product, Cart
 from .forms import CustomerProfileForm, CustomerRegistrationForm
 from django.contrib import messages
 from django.db.models import Q
@@ -113,8 +113,18 @@ def show_cart(request):
 
 class checkout(View):
     def get(self,request):
+        user=request.user
+        add=Customer.objects.filter(user=user)
+        cart_items=Cart.objects.filter(user=user)
+        famount = 0
+        for p in cart_items:
+            value = p.quantity * p.product.discounted_price
+            famount = famount + value
+        totalamount = famount + 40    
         return render(request, 'app/checkout.html', locals())   
-        
+def orders(request):
+    order_placed=OrderPlaced.objects.filter(user=request.user)
+    return render(request,'app/orders.html',locals())        
 
 def plus_cart(request):
     if request.method == 'GET':
@@ -173,3 +183,4 @@ def remove_cart(request):
         'totalamount':totalamount
        }
     return JsonResponse(data)
+
